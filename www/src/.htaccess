@@ -1,0 +1,26 @@
+# DEV ONLY
+php_flag display_startup_errors on
+php_flag display_errors on
+php_flag html_errors on
+
+# Redirection 404
+ErrorDocument 404 /404.php
+
+# **********************************
+Options +MultiViews
+AddType text/html php
+RewriteEngine On
+RewriteBase /
+
+# Logs
+#RewriteLogLevel 3
+#RewriteLog /var/www/logs/apache.log
+
+# Remove .php extension from URL
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# Gestion Cache navigateur JS et CSS
+RewriteRule ^assets/(css|js)_([0-9]+)/(.*)$ /assets/$1/$3 [L]
+#**********************************
