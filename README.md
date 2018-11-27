@@ -1,46 +1,47 @@
 # Docker LAMP
 
-Installs a simple Lamp project.
+Installs a simple Lamp project for local development
 
-## Create a local SSL certificate
+* Configures a local URL to access the website, ie `http:/yoursite`
+* Handles http and https
+* phpmyadmin is accessible via `/phpmyadmin/` (with a trailing /)
+
+## Install
+
+### Create a local SSL certificate
 
 - Download [mkcert](https://github.com/FiloSottile/mkcert)
-- `mkcert -install`
-- `mkcert yoursite`
-- `mv yoursite.pem yoursite-key.pem ./www`
+- Run `mkcert -install` so that your browser accepts mkcert certificates
+- Create a certificate and private key for your website:
 
-If you don't name your site `yoursite` (most likely), change the path of the pem files in `etc/apache2/hosts.conf`.
+        mkcert yoursite
+        mv yoursite.pem ./www/site.crt
+        mv yoursite-key.pem ./www/site.key
 
-## Run
+### Set your the database password
 
-    # Give ownership to www-data
-    # (we set the UID of www-data to 1000 in the Dockerfile)
-    sudo chown -R $(whoami):1000 ./www
+Change the name of the database and user to be created in `docker-compose.yml`
 
-  	# Make sure Docker is running
-  	sudo docker ps
-  
-  	# Run docker-compose
-  	sudo docker-compose up -d
-  
-## Access the site
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=mydatabase
+      - MYSQL_USER=myuser
+      - MYSQL_PASSWORD=userpassword
 
-- Edit `/etc/hosts` with admin privileges
-- Add `127.0.0.1 yoursite`
-- Open your browser and go to `http://yoursite` or `https://yoursite`
-
-## Define your environment variables
-
-### During dev
+### Set the app environment variables
 
 In the `www/.env.ini` file (loaded in `inc.config.php`)
 
+    ; Fichier de configuration chargé dans inc.config.php
+    
     DEBUG=true
     DOMAIN='yoursite'
+    
+    [database]
+    DB_DSN='mysql:dbname=mydatabase;host=db'
+    DB_USER='myuser'
+    DB_PASSWORD='userpassword'
 
-### During prod
-
-In the `docker-compose.yml` file
+Or in the `docker-compose.yml` file
 
     services:
       webserver:
@@ -49,7 +50,45 @@ In the `docker-compose.yml` file
           - DEBUG=0
           - DOMAIN=yoursite
 
-## Stop the containers
+## Run
+
+Give ownership to www-data
+(we set the UID of www-data to 1000 in the Dockerfile):
+
+    sudo chown -R $(whoami):1000 ./www
+
+Make sure Docker is running
+
+  	sudo docker ps
+
+Run the container
+
+  	sudo docker-compose up -d
+
+If you change the Dockerfile and you need to rebuild the image, use `sudo docker-compose build` instead
+
+## Access the site
+
+- Edit `/etc/hosts` with admin privileges and add `127.0.0.1 yoursite`
+- Access your website: `http://yoursite`
+- Check your SSL certificate is correctly configured: `https://yoursite`
+- Check you can access the database: `https://yoursite/test`
+- Access phpmyadmin: `https://yoursite/phpmyadmin/`
+
+## Others
+
+Stop the containers
 
     sudo docker stop $(sudo docker ps -a -q)
     sudo docker rm $(sudo docker ps -a -q)
+
+Execute a command on a running container
+
+    sudo docker ps
+    sudo docker exec -it CONTAINER_ID ls /
+
+Ressources that have been useful:  
+[@PerchCMS/simple-docker](https://github.com/PerchCMS/simple-docker)  
+[@sprintcube/docker-compose-lamp](https://github.com/sprintcube/docker-compose-lamp/blob/master/bin/webserver/Dockerfile)  
+[@mattrayner/docker-lamp](https://github.com/mattrayner/docker-lamp/blob/master/1604/Dockerfile-php7)  
+[@phpmyadmin/docker](https://github.com/phpmyadmin/docker/blob/master/Dockerfile)

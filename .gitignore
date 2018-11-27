@@ -1,3 +1,5 @@
 .DS_Store
 db/*
 !db/.gitkeep
+www/*.crt
+www/*.key
