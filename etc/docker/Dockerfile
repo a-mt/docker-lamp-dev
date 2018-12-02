@@ -24,5 +24,8 @@ RUN set -ex; \
 	rm -rf /var/www/phpmyadmin/{setup,examples,test,po}; \
 	echo '@include("/var/www/phpmyadmin/config.user.inc.php");' >> /var/www/phpmyadmin/config.inc.php
 
+# Install xdebug
+RUN pecl install xdebug
+
 # Start Apache
 RUN service apache2 restart

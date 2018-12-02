@@ -1,5 +1,7 @@
 .DS_Store
 db/*
 !db/.gitkeep
-www/*.crt
-www/*.key
+*.crt
+*.key
+www/phpmyadmin
+www/html

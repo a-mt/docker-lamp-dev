@@ -1,8 +1,8 @@
 # Docker LAMP
 
-Installs a simple Lamp project for local development
+Installs Lamp project for local development
 
-* Configures a local URL to access the website, ie `http:/yoursite`
+* Handles multiple domains (`localhost`, `yoursite`)
 * Handles http and https
 * phpmyadmin is accessible via `/phpmyadmin/` (with a trailing /)
 
@@ -15,8 +15,8 @@ Installs a simple Lamp project for local development
 - Create a certificate and private key for your website:
 
         mkcert yoursite
-        mv yoursite.pem ./www/site.crt
-        mv yoursite-key.pem ./www/site.key
+        mv yoursite.pem ./www/yoursite/site.crt
+        mv yoursite-key.pem ./www/yoursite/site.key
 
 ### Set your the database password
 
@@ -29,7 +29,7 @@ Change the name of the database and user to be created in `docker-compose.yml`
 
 ### Set the app environment variables
 
-In the `www/.env.ini` file (loaded in `inc.config.php`)
+In the `www/yoursite/.env.ini` file (loaded in `inc.config.php`)
 
     ; Fichier de configuration chargé dans inc.config.php
     
@@ -70,7 +70,7 @@ If you change the Dockerfile and you need to rebuild the image, use `sudo docker
 ## Access the site
 
 - Edit `/etc/hosts` with admin privileges and add `127.0.0.1 yoursite`
-- Access your website: `http://yoursite`
+- Check accessing the websites works: `http://localhost`, `http://yoursite`
 - Check your SSL certificate is correctly configured: `https://yoursite`
 - Check you can access the database: `https://yoursite/test`
 - Access phpmyadmin: `https://yoursite/phpmyadmin/`

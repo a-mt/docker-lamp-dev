@@ -3,15 +3,17 @@ version: '2'
 services:
   webserver:
     build: ./etc/docker
-    image: simple_lamp
+    image: lamp
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./www:/var/www/site
+      - ./www/yoursite:/var/www/yoursite
+      - ./www/localhost:/var/www/html
       - ./etc/apache2/apache2.conf:/etc/apache2/conf-enabled/apache2.conf
       - ./etc/apache2/hosts.conf:/etc/apache2/sites-enabled/000-default.conf
       - ./etc/phpmyadmin/config.user.inc.php:/var/www/phpmyadmin/config.user.inc.php
+      - ./etc/apache2/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
     links:
       - db
 
